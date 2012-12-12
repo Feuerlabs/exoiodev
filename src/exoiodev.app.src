@@ -1,0 +1,15 @@
+%% -*- mode: erlang; erlang-indent-level: 4; indent-tabs-mode: nil -*-
+%% Copyright (c) 2012 Feuerlabs, Inc.
+%%
+{application, exoiodev,
+ [
+  {description, "Feuerlabs IO device application"},
+  {vsn, git},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+		  bert,
+		  exoport
+                 ]}
+ ]}.
