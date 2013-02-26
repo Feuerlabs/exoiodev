@@ -7,28 +7,44 @@
 
 -module(exoio_gpio).
 
--export([write/2]).
+-export([write/1]).
 -export([read/1]).
--export([mode/2]).
+-export([mode/1]).
 
 -type pin_number() :: 1..1023.
+-type uint16()     :: 0..65535.
 
--spec write(Pin::pin_number(), Value::high | low) -> ok.
+-type write_argument() :: {pin, pin_number()} |
+			  {level, uint16()}.
 
-write(Pin, low) when Pin >= 0, Pin =< 1023 ->
-    ok;
-write(Pin, high) when Pin >= 0, Pin =< 1023 ->
-    ok.
+-spec write(Args::[write_argument()]) ->
+		   {notify, 'exoio:write-callback', []}.
 
--spec read(Pin::pin_number()) -> high | low.
-read(Pin) when Pin >= 0, Pin =< 1023 ->
-    high.
+write(Args) ->
+    Pin   = proplists:get_value(pin, Args),
+    Level = proplists:get_value(level, Args),
+    {notify, 'exoio:write-callback', []}.
 
--spec mode(Pin::pin_number(), Mode::output|input|nput_pullup) -> ok.
+-type read_argument() :: {pin, pin_number()}.
 
-mode(Pin,output) when Pin >= 0, Pin =< 1023 ->
-    ok;
-mode(Pin,input) when Pin >= 0, Pin =< 1023 ->
-    ok;
-mode(Pin,input_pullup) when Pin >= 0, Pin =< 1023 ->
-    ok.
+-spec read(Args::[read_argument()]) -> 
+		  {notify, 'exoio:read-callback', [{level,integer()}]}.
+read(Args) ->
+    Pin   = proplists:get_value(pin, Args),
+    if Pin > 32 ->
+	    {notify, 'exoio:read-callback', [{level, low}]};
+       true ->
+	    {notify, 'exoio:read-callback', [{level, high}]}
+    end.
+
+-type mode_argument() :: 
+	{pin, pin_number()} |
+	{mode, output|input|input_pullup}.
+			 
+-spec mode(Args::[mode_argument()]) ->
+		  {notify, 'exoio:mode-callback', []}.
+
+mode(Args) ->
+    Pin   = proplists:get_value(pin, Args),
+    Mod   = proplists:get_value(mode, Args),
+    {notify, 'exoio:write-callback', []}.
