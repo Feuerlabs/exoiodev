@@ -1,0 +1,63 @@
+/*
+ *  Model of digital value set / get
+ * 
+ */
+module exo-digital {
+    namespace "http://feuerlabs.com/ns/exo-digital";
+    prefix "gpio";
+
+    organization
+	"FeuerLabs Inc";
+
+    contact 
+	"Tony Rogvall <tony@feuerlabs.com>";
+
+    description "Digital input/output module";
+
+    grouping digital {
+	leaf index {
+	    type int32;
+	    mandatory true;
+	    description "The GPIO number used";
+	}
+
+	leaf direction {
+	    type enumeration {
+		enum input {
+		    value 1;
+		}
+		enum output {
+		    value 2;
+		}
+		enum bidirectional {
+		    value 3;
+		}
+	    }
+	}
+
+	leaf polarity { // change polarity
+	    type boolean;
+	}
+
+	leaf value {
+	    type   boolean;
+	    config false;
+	    // event-stream true;  could be a way of declaring event streams
+	    description "The gital value";
+	}
+
+	leaf interrupt_enable {
+	    type boolean;
+	}
+
+	leaf max-frequency {
+	    description "Maximum frequence to latch triggered samples, this
+                         defines an inhibit time period of 1/F. It is specified
+                         in Hz, number of samples per second";
+	    type decimal64 {
+		fraction-digits 2;
+	    }
+	}
+    }
+
+}
